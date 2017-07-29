@@ -14,8 +14,9 @@
 #' library.loc(gbm, )
 #'
 #' @export
-library.loc <- function(package, loc, ...) {
+library.loc <- function(pkg, loc, ...) {
   
+  # check loc directory exists
   if (!dir.exists(loc)) {
     
     stop(gettextf("loc (%s) does not exist.", sQuote(loc)))
@@ -23,41 +24,48 @@ library.loc <- function(package, loc, ...) {
   }
   
   # quote package if it is not passed quoted already
-  package <- as.character(substitute(package))
+  pkg <- as.character(substitute(pkg))
   
   # record current libPaths
   prev_libPaths <- .libPaths()
   
-  print(gettextf(".libPaths() currently set to %s.", sQuote(prev_libPaths)))
+  cat(gettextf(".libPaths() currently set to %s.", 
+               sQuote(prev_libPaths)),
+      "\n")
   
   if (prev_libPaths == loc) {
     
-    print("not reassigning .libPaths as it is already equal to loc.")
+    cat("not reassigning .libPaths as it is already equal to loc.\n")
     
   } else {
     
-    print("reassigning .libPaths()")
+    cat("reassigning .libPaths()\n")
+    
     
     assign(".lib.loc", loc, envir = environment(.libPaths))
     
     post_libPaths <- .libPaths()
     
-    print(gettextf(".libPaths() set to %s.", sQuote(post_libPaths)))
+    cat(gettextf(".libPaths() set to %s.", 
+                 sQuote(post_libPaths)),
+        "\n")
     
-    
+    if (post_libPaths != loc) {
+      
+      stop(".libPaths() was not reassigned successfully.")
+      
+    }
     
   }
   
+  cat(gettextf("attempting to load package %s from %s.", 
+               sQuote(pkg),
+               sQuote(loc)),
+      "\n")
   
-  
-
-  library(package, lib.loc = loc, ...)
+  library(pkg, lib.loc = loc, character.only = TRUE, ...)
   
 }
-
-
-
-
 
 
 
