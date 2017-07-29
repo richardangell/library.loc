@@ -9,9 +9,10 @@
 #'
 #' @param package name of package to load.
 #' @param loc directory to load from.
+#' @param ... other arguments to pass to library.
 #'
 #' @examples
-#' library.loc(gbm, )
+#' library.loc(pkg = gbm, loc = "/Users/richardangell/Projects/test")
 #'
 #' @export
 library.loc <- function(pkg, loc, ...) {
@@ -30,18 +31,19 @@ library.loc <- function(pkg, loc, ...) {
   prev_libPaths <- .libPaths()
   
   cat(gettextf(".libPaths() currently set to %s.", 
-               sQuote(prev_libPaths)),
+               paste(prev_libPaths, collapse = " ")),
       "\n")
   
-  if (prev_libPaths == loc) {
+  # check if .libPaths() is already set to the supplied loc
+  if (length(prev_libPaths) == 1 && prev_libPaths == loc) {
     
     cat("not reassigning .libPaths as it is already equal to loc.\n")
     
+  # if .libPaths() is not equal to loc and needs to be set
   } else {
     
     cat("reassigning .libPaths()\n")
-    
-    
+
     assign(".lib.loc", loc, envir = environment(.libPaths))
     
     post_libPaths <- .libPaths()
