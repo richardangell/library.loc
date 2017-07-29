@@ -1,18 +1,36 @@
 #' Load package (and dependencies) from specified directory.
 #'
-#' For the requested package check that all dependencies as well as the package
-#' itself are installed to the given directory. If they are not then the
-#' package will not be loaded. This is to prevent a package being loaded from
-#' one directory (e.g. within a project folder) but the dependencies being
-#' loaded from another (e.g. default R install locations) - as can be the case
-#' if \code{library(pkg, lib = directory)} is used.
+#' This function reassigns .libPaths() to the specified directory then tries to
+#' load the package using \code{base::library}. This is to ensure that package
+#' depenedencies (and the package itself) are not loaded from other directories
+#' in the search tree (\code{.libPaths()}).
 #'
 #' @param package name of package to load.
 #' @param loc directory to load from.
-#' @param ... other arguments to pass to library.
+#' @param ... other arguments to pass to \code{base::library}.
 #'
 #' @examples
-#' library.loc(pkg = gbm, loc = "/Users/richardangell/Projects/test")
+#' cwd <- getwd()
+#' 
+#' dir1 <- paste0(cwd, "/dir1")
+#' dir2 <- paste0(cwd, "/dir2")
+#' 
+#' dir.create(dir1)
+#' dir.create(dir2)
+#' 
+#' # install gbm package with and without dependencies
+#' install.packages("gbm", lib = dir1, dependencies = c("Depends", "Imports"))
+#' install.packages("gbm", lib = dir2, dependencies = FALSE)
+#' 
+#' # try to load from the directory without dependencies
+#' library.loc(gbm, loc = dir2)
+#' 
+#' # now try to load from the directory with dependencies installed
+#' library.loc(gbm, loc = dir1)
+#' 
+#' # to see behaviour of base::library - restart R before running
+#' .libPaths(c(dir1, dir2))
+#' library(gbm, lib.loc = dir2)
 #'
 #' @export
 library.loc <- function(pkg, loc, ...) {
@@ -68,11 +86,6 @@ library.loc <- function(pkg, loc, ...) {
   library(pkg, lib.loc = loc, character.only = TRUE, ...)
   
 }
-
-
-
-
-
 
 
 
