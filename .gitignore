@@ -1,3 +1,9 @@
+# R script for building package
+Building Package.R
+
+# .Rproj for project
+library.loc.Rproj
+
 # History files
 .Rhistory
 .Rapp.history
@@ -33,6 +39,4 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 
-# .Rproj for project
-library.loc.Rproj
 
